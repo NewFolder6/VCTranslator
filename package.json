@@ -1,0 +1,23 @@
+{
+  "name": "vctranslator",
+  "version": "1.0.0",
+  "description": "Real-time audio translation to subtitles using Vosk",
+  "main": "src/server/index.js",
+  "scripts": {
+    "start": "node src/server/index.js",
+    "dev": "nodemon src/server/index.js"
+  },
+  "dependencies": {
+    "fastify": "^4.24.0",
+    "vosk": "^0.3.39",
+    "audio-loopback": "^1.1.0",
+    "ws": "^8.14.2",
+    "node-wav": "^0.0.2",
+    "mic": "^2.1.2",
+    "pino-pretty": "^10.2.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
