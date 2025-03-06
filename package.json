@@ -5,19 +5,31 @@
   "main": "src/server/index.js",
   "scripts": {
     "start": "node src/server/index.js",
-    "dev": "nodemon src/server/index.js"
+    "dev": "nodemon src/server/index.js",
+    "preinstall": "node src/scripts/check-environment.js",
+    "postinstall": "node src/scripts/patch-ffi-napi.js",
+    "start:compat": "cross-env NODE_OPTIONS=--no-node-snapshot node src/server/index.js",
+    "start:safe": "cross-env SKIP_NATIVE_MODULES=true node src/server/index.js"
   },
   "dependencies": {
     "fastify": "^4.24.0",
-    "vosk": "^0.3.39",
-    "audio-loopback": "^1.1.0",
-    "ws": "^8.14.2",
+    "node-microphone": "^0.1.6",
+    "audio-play": "^2.3.1", 
+    "naudiodon": "^2.3.6",
+    "microphone-stream": "^6.0.1",
     "node-wav": "^0.0.2",
-    "mic": "^2.1.2",
+    "ws": "^8.14.2",
     "pino-pretty": "^10.2.0",
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.1",
+    "cross-env": "^7.0.3"
+  },
+  "optionalDependencies": {
+    "vosk": "^0.3.39"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
