@@ -9,19 +9,28 @@
     "preinstall": "node src/scripts/check-environment.js",
     "postinstall": "node src/scripts/patch-ffi-napi.js",
     "start:compat": "cross-env NODE_OPTIONS=--no-node-snapshot node src/server/index.js",
-    "start:safe": "cross-env SKIP_NATIVE_MODULES=true node src/server/index.js"
+    "start:safe": "cross-env SKIP_NATIVE_MODULES=true node src/server/index.js",
+    "download-model": "node src/scripts/download-model.js",
+    "download-model-enhanced": "node src/scripts/download-model-enhanced.js",
+    "download-specific-model": "node src/scripts/download-specific-model.js",
+    "verify-model": "node src/scripts/verify-model.js",
+    "fix-model": "node src/scripts/create-model-structure.js",
+    "diagnose": "node src/scripts/diagnose-vosk.js",
+    "setup": "node src/scripts/setup-all.js",
+    "fix-vosk": "node src/scripts/simple-fix-vosk.js",
+    "fix-speech": "node src/scripts/complete-fix.js"
   },
   "dependencies": {
-    "fastify": "^4.24.0",
-    "node-microphone": "^0.1.6",
-    "audio-play": "^2.3.1", 
-    "naudiodon": "^2.3.6",
-    "microphone-stream": "^6.0.1",
-    "node-wav": "^0.0.2",
-    "ws": "^8.14.2",
-    "pino-pretty": "^10.2.0",
+    "audio-play": "^1.0.1",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.3.1",
-    "cross-env": "^7.0.3"
+    "fastify": "^4.24.0",
+    "microphone-stream": "^6.0.1",
+    "naudiodon": "^2.3.6",
+    "node-microphone": "^0.1.6",
+    "node-wav": "^0.0.2",
+    "pino-pretty": "^10.2.0",
+    "ws": "^8.14.2"
   },
   "optionalDependencies": {
     "vosk": "^0.3.39"

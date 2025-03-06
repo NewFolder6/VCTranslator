@@ -20,9 +20,11 @@ try {
   
   vosk = require('vosk');
   
-  if (!fs.existsSync(MODEL_PATH)) {
+  // Check if model exists and is not empty
+  if (!fs.existsSync(MODEL_PATH) || fs.readdirSync(MODEL_PATH).length === 0) {
     console.warn(`Vosk model not found at ${MODEL_PATH}`);
-    console.warn('Please download a model from https://alphacephei.com/vosk/models');
+    console.warn('Please run: node src/scripts/download-model.js');
+    console.warn('or download a model from https://alphacephei.com/vosk/models');
     console.warn('and extract it to the models/vosk-model-en directory');
     throw new Error('Vosk model not found');
   }
@@ -31,6 +33,37 @@ try {
 } catch (err) {
   console.warn(`Speech recognition (Vosk) couldn't be loaded: ${err.message}`);
   speechRecognitionSupported = false;
+}
+
+// Modify the Vosk loading section with better error handling
+let Vosk;
+try {
+  Vosk = require('vosk');
+} catch (error) {
+  if (error.code === 'MODULE_NOT_FOUND') {
+    console.error('\n==========================================');
+    console.error('🔴 Speech recognition (Vosk) module is missing');
+    console.error('==========================================');
+    console.error('To install and fix Vosk, run one of these commands:');
+    console.error('  npm run fix-vosk     - Simple automatic installation');
+    console.error('  npm run diagnose     - Run diagnostics');
+    console.error('  npm run fix-speech   - Full fix for complex issues\n');
+    console.error('Continuing in limited mode without speech recognition...');
+    console.error('==========================================\n');
+  } else {
+    console.error('\n==========================================');
+    console.error('🔴 Error initializing Vosk speech recognition:');
+    console.error(error.message);
+    console.error('==========================================');
+    console.error('To fix this issue:');
+    console.error('1. Run diagnostics: npm run diagnose');
+    console.error('2. Try complete fix: npm run fix-speech');
+    console.error('3. Check if your system meets requirements for Vosk');
+    console.error('==========================================\n');
+  }
+  
+  // Re-throw a more informative error
+  throw new Error('Speech recognition unavailable. Run "npm run fix-vosk" to install.');
 }
 
 class SpeechRecognition {
@@ -52,6 +85,12 @@ class SpeechRecognition {
     }
     
     try {
+      // Check if model directory exists and has contents
+      if (!fs.existsSync(this.options.modelPath) || fs.readdirSync(this.options.modelPath).length === 0) {
+        console.error(`Model directory doesn't exist or is empty: ${this.options.modelPath}`);
+        return false;
+      }
+
       // Initialize Vosk
       vosk.setLogLevel(0); // Set to higher values for more verbose output
       const model = new vosk.Model(this.options.modelPath);
@@ -60,7 +99,7 @@ class SpeechRecognition {
         sampleRate: this.options.sampleRate
       });
       
-      console.log('Speech recognition initialized');
+      console.log('Speech recognition initialized successfully');
       return true;
     } catch (err) {
       console.error('Failed to initialize speech recognition:', err);

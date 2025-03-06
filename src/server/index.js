@@ -28,6 +28,16 @@ routes.registerRoutes(fastify);
 // Set up WebSocket server for subtitles
 let wss;
 
+// After server initialization, check if we're in limited mode
+const hasSpeechRecognition = (() => {
+  try {
+    require('../speech-recognition');
+    return true;
+  } catch (e) {
+    return false;
+  }
+})();
+
 // Start the server
 const start = async () => {
   try {
@@ -40,6 +50,16 @@ const start = async () => {
     
     // Set up WebSocket handlers
     routes.registerWebSockets(wss, fastify);
+    
+    if (!hasSpeechRecognition) {
+      console.log('\n┌───────────────────────────────────────────┐');
+      console.log('│           LIMITED MODE ACTIVE             │');
+      console.log('├───────────────────────────────────────────┤');
+      console.log('│ • Speech recognition is not available     │');
+      console.log('│ • To enable full functionality:           │');
+      console.log('│   Run: npm run fix-vosk                   │');
+      console.log('└───────────────────────────────────────────┘\n');
+    }
     
   } catch (err) {
     fastify.log.error(err);

@@ -1,13 +1,27 @@
 const { AudioLoopback, audioRecordingSupported } = require('../audio-wrapper');
-const { SpeechRecognition, speechRecognitionSupported } = require('../speech-recognition');
 const path = require('path');
 
-// Initialize audio and speech recognition
+// Update the part where speech recognition is imported
+let speechRecognition = null;
+try {
+  speechRecognition = require('../speech-recognition');
+} catch (error) {
+  // More graceful error handling
+  console.warn('Speech recognition module could not be loaded:');
+  if (error.message.includes('Run "npm run fix-vosk"')) {
+    console.warn('• Vosk is required for speech recognition capabilities');
+    console.warn('• Run "npm run fix-vosk" to install the missing dependency');
+    console.warn('• Application will continue with limited functionality');
+  } else {
+    console.error(error.message);
+  }
+}
+
+// Initialize audio
 const audioLoopback = new AudioLoopback();
-const speechRecognition = new SpeechRecognition();
 
 // Try to initialize speech recognition
-const recognitionAvailable = speechRecognition.initialize();
+const recognitionAvailable = speechRecognition ? speechRecognition.initialize() : false;
 
 // Store WebSocket clients for broadcast
 const clients = new Set();
@@ -108,6 +122,28 @@ function registerRoutes(fastify) {
       speechRecognitionAvailable: recognitionAvailable
     });
   });
+
+  // When setting up websocket or routes that use speech recognition
+  if (!speechRecognition) {
+    console.info('💡 INFO: Setting up routes in limited mode (no speech recognition)');
+    fastify.get('/api/status', async (request, reply) => {
+      return { 
+        status: 'limited', 
+        features: {
+          speechRecognition: false
+        },
+        missingDependencies: ['vosk'],
+        fixCommands: {
+          vosk: 'npm run fix-vosk'
+        }
+      };
+    });
+    
+    // Add any other limited mode routes here
+  } else {
+    // Normal route setup with speech recognition
+    // ...existing code...
+  }
 }
 
 function registerWebSockets(wss, fastify) {

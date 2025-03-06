@@ -21,6 +21,10 @@ Real-time audio translation to subtitles using Vosk speech recognition.
 
 3. **Audio Device**: A working microphone or audio input device
 
+4. **Speech Recognition Model**: 
+   - After installing dependencies, run: `npm run download-model`
+   - This will automatically download and extract the Vosk speech recognition model
+
 ### Installation:
 
 ```bash
@@ -32,6 +36,9 @@ cd VCTranslator
 
 # Install dependencies
 npm install
+
+# Download speech recognition model
+npm run download-model
 ```
 
 ## Running the Application
